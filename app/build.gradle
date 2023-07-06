@@ -2,10 +2,12 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'kotlin-parcelize'
 }
 
 android {
     compileSdkVersion 34
+    namespace 'com.dicoding.todoapp'
 
     defaultConfig {
         applicationId "com.dicoding.todoapp"
