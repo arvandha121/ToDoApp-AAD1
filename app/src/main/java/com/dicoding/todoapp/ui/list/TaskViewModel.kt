@@ -7,6 +7,7 @@ import com.dicoding.todoapp.data.Task
 import com.dicoding.todoapp.data.TaskRepository
 import com.dicoding.todoapp.utils.Event
 import com.dicoding.todoapp.utils.TasksFilterType
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class TaskViewModel(private val taskRepository: TaskRepository) : ViewModel() {
@@ -26,6 +27,14 @@ class TaskViewModel(private val taskRepository: TaskRepository) : ViewModel() {
 
     fun filter(filterType: TasksFilterType) {
         _filter.value = filterType
+    }
+
+    fun insertTask(task: Task) : Long{
+        var returnValue : Long = -1
+        viewModelScope.launch(Dispatchers.IO) {
+            returnValue = taskRepository.insertTask(task)
+        }
+        return returnValue
     }
 
     fun completeTask(task: Task, completed: Boolean) = viewModelScope.launch {

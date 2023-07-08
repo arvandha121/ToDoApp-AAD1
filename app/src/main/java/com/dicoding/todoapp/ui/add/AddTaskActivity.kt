@@ -5,21 +5,41 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.dicoding.todoapp.R
+import com.dicoding.todoapp.data.Task
+import com.dicoding.todoapp.data.TaskRepository
+import com.dicoding.todoapp.databinding.ActivityAddTaskBinding
+import com.dicoding.todoapp.ui.ViewModelFactory
+import com.dicoding.todoapp.ui.detail.DetailTaskViewModel
+import com.dicoding.todoapp.ui.list.TaskViewModel
 import com.dicoding.todoapp.utils.DatePickerFragment
+import kotlinx.coroutines.Dispatchers
 import java.text.SimpleDateFormat
 import java.util.*
 
 class AddTaskActivity : AppCompatActivity(), DatePickerFragment.DialogDateListener {
     private var dueDateMillis: Long = System.currentTimeMillis()
 
+    private lateinit var binding : ActivityAddTaskBinding
+    private lateinit var viewModel: TaskViewModel
+
+    private lateinit var repository: TaskRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_task)
+        binding = ActivityAddTaskBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         supportActionBar?.title = getString(R.string.add_task)
 
+        val viewModelFactory = ViewModelFactory.getInstance(this)
+        viewModel = ViewModelProvider(
+            this@AddTaskActivity,
+            viewModelFactory
+        )[TaskViewModel::class.java]
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -31,6 +51,20 @@ class AddTaskActivity : AppCompatActivity(), DatePickerFragment.DialogDateListen
         return when (item.itemId) {
             R.id.action_save -> {
                 //TODO 12 : Create AddTaskViewModel and insert new task to database
+
+                val titleTask = binding.addEdTitle.text.toString()
+                val descTask = binding.addEdDescription.text.toString()
+
+                val newTask = Task(
+                    0,
+                    titleTask,
+                    descTask,
+                    dueDateMillis,
+                    false
+                )
+                val result = viewModel.insertTask(task = newTask)
+                Toast.makeText(applicationContext, R.string.toast_taskAdd, Toast.LENGTH_SHORT).show()
+                finish()
                 true
             }
             else -> super.onOptionsItemSelected(item)

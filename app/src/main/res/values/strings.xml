@@ -30,4 +30,8 @@
     <string name="filter_all">All</string>
     <string name="filter_active">Active</string>
     <string name="filter_completed">Completed</string>
+
+    <!-- Toast -->
+    <string name="toast_taskDelete">Task has been deleted</string>
+    <string name="toast_taskAdd">New task has been added</string>
 </resources>

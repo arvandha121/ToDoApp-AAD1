@@ -3,9 +3,10 @@ package com.dicoding.todoapp.ui.detail
 import androidx.lifecycle.*
 import com.dicoding.todoapp.data.Task
 import com.dicoding.todoapp.data.TaskRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class DetailTaskViewModel(private val taskRepository: TaskRepository): ViewModel() {
+class DetailTaskViewModel(private val taskRepository: TaskRepository) : ViewModel() {
 
     private val _taskId = MutableLiveData<Int>()
 
@@ -14,15 +15,13 @@ class DetailTaskViewModel(private val taskRepository: TaskRepository): ViewModel
     }
     val task: LiveData<Task> = _task
 
-    fun setTaskId(taskId: Int?) {
-        if (taskId == _taskId.value) {
-            return
-        }
-        _taskId.value = taskId
+    fun setTaskId(taskId: Int): LiveData<Task> {
+        return taskRepository.getTaskById(taskId = taskId)
     }
 
     fun deleteTask() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+//            taskRepository.deleteTask(task)
             _task.value?.let { taskRepository.deleteTask(it) }
         }
     }
