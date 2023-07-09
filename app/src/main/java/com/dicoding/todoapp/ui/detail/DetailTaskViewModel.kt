@@ -19,10 +19,9 @@ class DetailTaskViewModel(private val taskRepository: TaskRepository) : ViewMode
         return taskRepository.getTaskById(taskId = taskId)
     }
 
-    fun deleteTask() {
-        viewModelScope.launch(Dispatchers.IO) {
-//            taskRepository.deleteTask(task)
-            _task.value?.let { taskRepository.deleteTask(it) }
+    fun deleteTask(task: Task) {
+        viewModelScope.launch {
+            taskRepository.deleteTask(task)
         }
     }
 }

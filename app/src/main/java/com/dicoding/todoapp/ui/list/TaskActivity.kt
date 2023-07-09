@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.Observer
@@ -27,6 +28,7 @@ class TaskActivity : AppCompatActivity() {
 
     private lateinit var recycler: RecyclerView
     private lateinit var taskViewModel: TaskViewModel
+    private lateinit var taskAdapter: TaskAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,11 +46,12 @@ class TaskActivity : AppCompatActivity() {
         initAction()
 
         val factory = ViewModelFactory.getInstance(this)
-        taskViewModel = ViewModelProvider(this, factory).get(TaskViewModel::class.java)
+        taskViewModel = ViewModelProvider(this, factory)[TaskViewModel::class.java]
 
         taskViewModel.tasks.observe(this, Observer(this::showRecyclerView))
 
         //TODO 15 : Fixing bug : snackBar not show when task completed
+        taskViewModel.snackbarText.observe(this@TaskActivity, Observer(this::showSnackBar))
     }
 
     private fun initRecycler() {
@@ -58,8 +61,8 @@ class TaskActivity : AppCompatActivity() {
 
     private fun showRecyclerView(task: PagedList<Task>) {
         //TODO 7 : Submit pagedList to adapter and update database when onCheckChange
-        val taskAdapter = TaskAdapter {_task, _isChecked ->
-            taskViewModel.completeTask(_task, _isChecked)
+        taskAdapter = TaskAdapter { task, isChecked ->
+            taskViewModel.completeTask(task, isChecked)
         }
         taskAdapter.submitList(task)
         recycler.adapter = taskAdapter
@@ -86,10 +89,12 @@ class TaskActivity : AppCompatActivity() {
                 startActivity(settingIntent)
                 true
             }
+
             R.id.action_filter -> {
                 showFilteringPopUpMenu()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -133,6 +138,7 @@ class TaskActivity : AppCompatActivity() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val task = (viewHolder as TaskAdapter.TaskViewHolder).getTask
                 taskViewModel.deleteTask(task)
+                Toast.makeText(this@TaskActivity, R.string.delete_task, Toast.LENGTH_SHORT).show()
             }
 
         })

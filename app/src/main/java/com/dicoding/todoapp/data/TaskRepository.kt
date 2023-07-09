@@ -33,7 +33,7 @@ class TaskRepository(private val tasksDao: TaskDao) {
         val filteredQuery = FilterUtils.getFilteredQuery(filter)
 
         val config = PagedList.Config.Builder()
-            .setEnablePlaceholders(false)
+            .setEnablePlaceholders(PLACEHOLDERS)
             .setPageSize(PAGE_SIZE)
             .build()
 
