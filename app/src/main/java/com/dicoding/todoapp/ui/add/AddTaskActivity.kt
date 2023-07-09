@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.dicoding.todoapp.R
 import com.dicoding.todoapp.data.Task
-import com.dicoding.todoapp.data.TaskRepository
 import com.dicoding.todoapp.databinding.ActivityAddTaskBinding
 import com.dicoding.todoapp.ui.ViewModelFactory
 import com.dicoding.todoapp.ui.list.TaskViewModel
@@ -23,8 +22,6 @@ class AddTaskActivity : AppCompatActivity(), DatePickerFragment.DialogDateListen
 
     private lateinit var binding : ActivityAddTaskBinding
     private lateinit var viewModel: TaskViewModel
-
-    private lateinit var repository: TaskRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

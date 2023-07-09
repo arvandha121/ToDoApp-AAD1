@@ -3,7 +3,6 @@ package com.dicoding.todoapp.ui.detail
 import androidx.lifecycle.*
 import com.dicoding.todoapp.data.Task
 import com.dicoding.todoapp.data.TaskRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class DetailTaskViewModel(private val taskRepository: TaskRepository) : ViewModel() {

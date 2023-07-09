@@ -5,13 +5,10 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.dicoding.todoapp.R
 import com.dicoding.todoapp.data.Task
 import com.dicoding.todoapp.databinding.ActivityTaskDetailBinding
 import com.dicoding.todoapp.ui.ViewModelFactory
-import com.dicoding.todoapp.ui.list.TaskAdapter
 import com.dicoding.todoapp.utils.DateConverter
 import com.dicoding.todoapp.utils.TASK_ID
 
