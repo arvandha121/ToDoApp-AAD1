@@ -52,7 +52,7 @@ class TaskRepository(private val tasksDao: TaskDao) {
         return tasksDao.getNearestActiveTask()
     }
 
-    suspend fun insertTask(newTask: Task): Long {
+    fun insertTask(newTask: Task): Long {
         return tasksDao.insertTask(newTask)
     }
 

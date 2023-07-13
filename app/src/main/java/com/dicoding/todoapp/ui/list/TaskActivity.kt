@@ -1,6 +1,9 @@
 package com.dicoding.todoapp.ui.list
 
 import android.content.Intent
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -8,6 +11,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.PagedList
@@ -138,9 +142,51 @@ class TaskActivity : AppCompatActivity() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val task = (viewHolder as TaskAdapter.TaskViewHolder).getTask
                 taskViewModel.deleteTask(task)
-                Toast.makeText(this@TaskActivity, R.string.delete_task, Toast.LENGTH_SHORT).show()
+
+                val snackbar = Snackbar.make(recycler, R.string.delete_task, Snackbar.LENGTH_LONG)
+                snackbar.setAction("Undo") {
+                    // Undo delete action
+                    taskViewModel.undoDelete()
+                }
+                snackbar.setActionTextColor(ContextCompat.getColor(this@TaskActivity, R.color.teal_200))
+                snackbar.show()
             }
 
+            val deleteIcon = ContextCompat.getDrawable(this@TaskActivity, R.drawable.ic_delete)
+
+            override fun onChildDraw(
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+                val itemView = viewHolder.itemView
+                val itemHeight = itemView.height
+
+                // Draw background color
+                val background = ColorDrawable(Color.RED)
+                background.setBounds(
+                    itemView.left,
+                    itemView.top,
+                    itemView.left + dX.toInt(),
+                    itemView.bottom
+                )
+                background.draw(c)
+
+                // Draw delete icon
+                val iconMargin = (itemHeight - deleteIcon?.intrinsicHeight!!) / 3
+                val iconTop = itemView.top + (itemHeight - deleteIcon.intrinsicHeight) / 2
+                val iconBottom = iconTop + deleteIcon.intrinsicHeight
+                val iconLeft = itemView.left + iconMargin
+                val iconRight = iconLeft + deleteIcon.intrinsicWidth
+                deleteIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+                deleteIcon.draw(c)
+
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+            }
         })
         itemTouchHelper.attachToRecyclerView(recycler)
     }

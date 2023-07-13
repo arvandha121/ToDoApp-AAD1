@@ -9,10 +9,12 @@ import com.dicoding.todoapp.utils.Event
 import com.dicoding.todoapp.utils.TasksFilterType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class TaskViewModel(private val taskRepository: TaskRepository) : ViewModel() {
 
     private val _filter = MutableLiveData<TasksFilterType>()
+    private var undoDelete: Task? = null
 
     val tasks: LiveData<PagedList<Task>> = _filter.switchMap {
         taskRepository.getTasks(it)
@@ -29,10 +31,12 @@ class TaskViewModel(private val taskRepository: TaskRepository) : ViewModel() {
         _filter.value = filterType
     }
 
-    fun insertTask(task: Task) : Long{
-        var returnValue : Long = -1
-        viewModelScope.launch(Dispatchers.IO) {
-            returnValue = taskRepository.insertTask(task)
+    fun insertTask(task: Task): Long {
+        var returnValue: Long = -1
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                returnValue = taskRepository.insertTask(task)
+            }
         }
         return returnValue
     }
@@ -48,7 +52,20 @@ class TaskViewModel(private val taskRepository: TaskRepository) : ViewModel() {
 
     fun deleteTask(task: Task) {
         viewModelScope.launch {
+            undoDelete = task
             taskRepository.deleteTask(task)
         }
+    }
+
+    fun undoDelete() {
+        val taskToRestore = undoDelete
+        if (taskToRestore != null) {
+            viewModelScope.launch {
+                withContext(Dispatchers.IO) {
+                    taskRepository.insertTask(taskToRestore)
+                }
+            }
+        }
+        undoDelete = null
     }
 }
